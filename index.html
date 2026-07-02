@@ -344,15 +344,20 @@ const kanaToRomaji = {
   'ョ':'yo','ッ':'','ー':''
 };
 function toRomaji(text) {
+  const sm = { 'ゃ':'a','ゅ':'u','ょ':'o','ャ':'a','ュ':'u','ョ':'o' };
   let r = '';
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
-    if (kanaToRomaji[ch] !== undefined) {
-      r += kanaToRomaji[ch];
-      if ((ch === 'っ' || ch === 'ッ') && i+1 < text.length && kanaToRomaji[text[i+1]]) {
-        const n = kanaToRomaji[text[i+1]];
-        if (n) r += n[0];
+    if (ch in sm && r.length > 0) {
+      r = r.slice(0, -1) + sm[ch];
+    } else if (ch === 'っ' || ch === 'ッ') {
+      continue;
+    } else if (kanaToRomaji[ch] !== undefined) {
+      let roma = kanaToRomaji[ch];
+      if (i > 0 && (text[i-1] === 'っ' || text[i-1] === 'ッ') && roma.length > 0) {
+        roma = roma[0] + roma;
       }
+      r += roma;
     } else if (/[a-zA-Z0-9]/.test(ch)) {
       r += ch.toLowerCase();
     }
@@ -542,6 +547,7 @@ questions.forEach((q, i) => {
 const searchBox = document.getElementById('searchBox');
 searchBox.addEventListener('input', () => {
   const val = searchBox.value.trim().toLowerCase();
+  const valRomaji = toRomaji(val).replace(/\s+/g, '');
   let visible = 0;
   if (!val) {
     cards.forEach(c => { c.style.display = ''; });
@@ -555,9 +561,9 @@ searchBox.addEventListener('input', () => {
                     q.answer.toLowerCase().includes(val) ||
                     q.sinhala.toLowerCase().includes(val) ||
                     q.label.includes(val) ||
-                    r.qr.includes(val) ||
-                    r.ar.includes(val) ||
-                    r.sr.includes(val);
+                    r.qr.includes(val) || r.qr.includes(valRomaji) ||
+                    r.ar.includes(val) || r.ar.includes(valRomaji) ||
+                    r.sr.includes(val) || r.sr.includes(valRomaji);
       c.style.display = match ? '' : 'none';
       if (match) visible++;
     });
