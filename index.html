@@ -230,6 +230,7 @@ body.dark .card { border-color: #444; }
       <button id="pSpeedUp">+</button>
     </div>
     <div class="p-answer" id="pAnswer"></div>
+    <div id="pRomaji" style="font-size:0.8rem;color:var(--text-secondary);padding:4px 16px 0;font-style:italic;display:none;"></div>
     <div class="p-status" id="pStatus"></div>
   </div>
 </div>
@@ -240,114 +241,133 @@ const questions = [
     "label": "1",
     "question": "どんな しごと を していました か。／ しごと の けいけん を おしえて ください。",
     "answer": "スリランカ の ホテル で レセプション として はたらいていました。いま も おなじ しごと を つづけて います。ホテル の なまえ は クイーンズホテル です。キャンディ に あります。",
+    "romaji": "Suriranka no hoteru de resepushon toshite hatarai te imashita. Ima mo onaji shigoto wo tsuzukete imasu. Hoteru no namae wa Kuiinzu hoteru desu. Kyandi ni arimasu.",
     "sinhala": "ඔයා කලින් කරපු රැකියාව මොකක්ද? / රැකියා පළපුරුද්ද පවසන්න."
   },
   {
     "label": "2",
     "question": "なぜ にほん で はたらきたい です か。",
     "answer": "わたし は ちいさい ころ から、にほん に いく の が ゆめ でした。にほん の ぶんか や、すばらしい おもてなし の サービス に きょうみ が あります。おきゃくさま に よろこんで いただける ような サービス の ぎじゅつ を まなびたい と おもいます。その ため に にほん を えらびました。",
+    "romaji": "Watashi wa chiisai koro kara, Nihon ni iku no ga yume deshita. Nihon no bunka ya, subarashii omotenashi no saabisu ni kyoumi ga arimasu. Okyakusama ni yorokonde itadakeru youna saabisu no gijutsu wo manabitai to omoimasu. Sono tame ni Nihon wo erabimashita.",
     "sinhala": "ඇයි ජපානයේ වැඩ කරන්න හිතන්නේ?"
   },
   {
     "label": "3",
     "question": "あなた の ちょうしょ を おしえて ください。",
     "answer": "わたし の ちょうしょ は せきにんかん が ある ところ です。まかせた しごと を さいご まで やりとげます。あと あたらしい こと を はやく まなべます。（たとえば、ホテル の システム や マナー を はやく おぼえられます。）いぜん クイーンズホテル で レセプション の しごと を したとき むずかしい もんだい が おきて も あわてずに れいせいに たいおうし かいけつ する ことが できました。この ちょうしょ を いかして にほん で も せきにん を もって はたらきたい です。",
+    "romaji": "Watashi no chousho wa sekininkan ga aru tokoro desu. Makaseta shigoto wo saigo made yaritogemasu. Ato atarashii koto wo hayaku manabemasu. (Tatoeba, hoteru no shisutemu ya manaa wo hayaku oboeraremasu.) Izen Kuiinzu hoteru de resepushon no shigoto wo shita toki muzukashii mondai ga okite mo awatezu ni reisei ni taiou shi kaiketsu suru koto ga dekimashita. Kono chousho wo ikashite Nihon de mo sekinin wo motte hatarakitai desu.",
     "sinhala": "ඔයාගේ ශක්තීන්/දක්ෂතා මොනවාද?"
   },
   {
     "label": "4",
     "question": "あなた の たんしょ を おしえて ください。",
     "answer": "わたし の たんしょ は しごと に しゅうちゅう しすぎる ところ です。いま は じかん の バランス を いしき しながら しごと を するように こころがけて います。ひとつ ひとつ の しごと を きにしすぎて じかん が かかる こと が ある から です。",
+    "romaji": "Watashi no tansho wa shigoto ni shuuchuu shisugiru tokoro desu. Ima wa jikan no baransu wo ishiki shinagara shigoto wo suru youni kokorogakete imasu. Hitotsu hitotsu no shigoto wo kini shisugite jikan ga kakaru koto ga aru kara desu.",
     "sinhala": "ඔයාගේ දුර්වලකම මොකක්ද?"
   },
   {
     "label": "5",
     "question": "ぎふけん に ついて なにか しっています か。／ なぜ ぎふ で はたらきたい です か。",
     "answer": "ぎふけん は、しぜん が とても うつくしい と ききました。とくに、しらかわごう の ふるい、にほん の いえ を みて みたい です。そして、ぎふ の ひと は とても やさしい と ききました から、ぎふ で はたらきたい です。",
+    "romaji": "Gifu-ken wa, shizen ga totemo utsukushii to kikimashita. Tokuni, Shirakawago no furui, Nihon no ie wo mite mitai desu. Soshite, Gifu no hito wa totemo yasashii to kikimashita kara, Gifu de hatarakitai desu.",
     "sinhala": "ගිෆු ගැන මොනවා දන්නවාද දන්නේ? / ඇයි ගිෆු වල වැඩ කරන්න හිතන්නේ?"
   },
   {
     "label": "6",
     "question": "えいご は できます か。",
     "answer": "はい、えいご は はなす こと が できます。びじねす かいわ や、ホテル の しごと で の かいわ も だいじょうぶ です。",
+    "romaji": "Hai, eigo wa hanasu koto ga dekimasu. Bijinesu kaiwa ya, hoteru no shigoto de no kaiwa mo daijoubu desu.",
     "sinhala": "ඉංග්‍රීසි පුළුවන්ද?"
   },
   {
     "label": "7",
     "question": "あなたの しゅみは なんですか。",
     "answer": "わたし の しゅみ は あたらしい てくのろじー を まなぶ こと と、えーあい を つかって ビデオ や がぞう を つくる こと です。",
+    "romaji": "Watashi no shumi wa atarashii tekunorojii wo manabu koto to, eiai wo tsukatte bideo ya gazou wo tsukuru koto desu.",
     "sinhala": "විනෝදාංශ මොනවාද?"
   },
   {
     "label": "8",
     "question": "シフトきんむ は だいじょうぶ です か。",
     "answer": "はい、やきん や シフト きんむ は まったく もんだい ありません。だいじょうぶ です。",
+    "romaji": "Hai, yakin ya shifuto kinmu wa mattaku mondai arimasen. Daijoubu desu.",
     "sinhala": "ශිෆ්ට් ක්‍රමයට වැඩ කරන්න පුළුවන්ද?"
   },
   {
     "label": "9",
     "question": "アレルギー や だんじき は あります か。",
     "answer": "いいえ、たべもの の アレルギー は ありません。だんじき も しません ので、しごと に えいきょう は ありません。",
+    "romaji": "Iie, tabemono no arerugii wa arimasen. Danjiki mo shimasen node, shigoto ni eikyou wa arimasen.",
     "sinhala": "කෑම බීම ඇලර්ජි හෝ උපවාස තියෙනවාද?"
   },
   {
     "label": "10",
     "question": "じてんしゃ に のる こと や あるく こと は だいじょうぶ です か。",
     "answer": "はい、まいにち、じてんしゃ に のる こと も、ながい きょり を あるく こと も だいじょうぶ です。",
+    "romaji": "Hai, mainichi, jitensha ni noru koto mo, nagai kyori wo aruku koto mo daijoubu desu.",
     "sinhala": "බයිසිකල් පදින්න සහ පයින් ඇවිදින්න පුළුවන්ද?"
   },
   {
     "label": "12",
     "question": "いま の しごと を やめる こと に もんだい は ありません か。",
     "answer": "はい、まったく もんだい ありません。すでに ホテル には「にほん で はたらく ため に やめる」と つたえて あります。",
+    "romaji": "Hai, mattaku mondai arimasen. Sude ni hoteru ni wa "Nihon de hataraku tame ni yameru" to tsutaete arimasu.",
     "sinhala": "දැනට කරන රැකියාවෙන් ඉවත් වෙන්න ගැටලුවක් නැද්ද?"
   },
   {
     "label": "13",
     "question": "めんせつ の おわり に：ほんじつはおじかんをいただき、ありがとうございました。",
     "answer": "ほんじつはおじかんをいただき、ありがとうございました。",
+    "romaji": "Honjitsu wa ojikan wo itadaki, arigatou gozaimashita.",
     "sinhala": "ඉන්ටර්වීව් එක අවසානයේදී"
   },
   {
     "label": "14",
     "question": "かいしゃ に しつもん したいこと は ありますか。（ぎゃくしつもん）",
     "answer": "はい、ホテルの しごとを はじめる まえに なにか じゅんびして おくことは ありますか。",
+    "romaji": "Hai, hoteru no shigoto wo hajimeru mae ni, nanika junbi shite oku koto wa arimasu ka?",
     "sinhala": "සමාගමෙන් ඔබට අහන්න තියෙනවාද? (ඔබ අසන ප්‍රශ්නය)"
   },
   {
     "label": "15",
     "question": "けいたい で ぐーぐるまっぷ を つかう こと が できます か。",
     "answer": "はい、できます。いつも すまーとほん で ぐーぐるまっぷ や なびげーしょん を つかって います。",
+    "romaji": "Hai, dekimasu. Itsumo sumaatohon de Guuguru Mappu ya nabigeeshon wo tsukatte imasu.",
     "sinhala": "Google Maps භාවිත කරන්න පුළුවන්ද?"
   },
   {
     "label": "16",
     "question": "じこ が あった とき、 なに を しなければ なりませんか。",
     "answer": "まず けいさつ に れんらく します。そのあと かいしゃ に れんらく します。けがにん が いれば きゅうきゅうしゃ を よびます。",
+    "romaji": "Mazu keisatsu ni renraku shimasu. Sonoato kaisha ni renraku shimasu. Keganin ga ireba kyuukyuusha wo yobimasu.",
     "sinhala": "රිය අනතුරක් සිදු වූ විට කළ යුතු දේ?"
   },
   {
     "label": "17",
     "question": "どくしん です か。／ けっこん して います か。",
     "answer": "いいえ、けっこん して いません。どくしん です。",
+    "romaji": "Iie, kekkon shite imasen. Dokushin desu.",
     "sinhala": "විවාහකද / අවිවාහකද?"
   },
   {
     "label": "18",
     "question": "にほん へ いく こと に ついて かぞく の どうい は あります か。",
     "answer": "はい、かぞく は みんな さんせい して いて、おうえん して くれて います。",
+    "romaji": "Hai, kazoku wa minna sansei shite ite, ouen shite kurete imasu.",
     "sinhala": "ජපානයට යාමට පවුලේ අයගේ කැමැත්ත?"
   },
   {
     "label": "19",
     "question": "にほん で どのくらい はたらきたい です か。",
     "answer": "できれば じゅうごねん いじょう、ながく はたらきたい と おもって おります。にほん の せいかつ や しごと に なれて、ずっと がんばります。",
+    "romaji": "Dekireba juugonen ijou, nagaku hatarakitai to omotte orimasu. Nihon no seikatsu ya shigoto ni narete, zutto ganbarimasu.",
     "sinhala": "ජපානයේ කොපමණ කාලයක් වැඩ කරන්න බලාපොරොත්තු වෙනවාද?"
   },
   {
     "label": "20",
     "question": "きょうゆう せいかつ は だいじょうぶ です か。",
     "answer": "はい、まったく もんだい ありません。だいじょうぶ です。",
+    "romaji": "Hai, mattaku mondai arimasen. Daijoubu desu.",
     "sinhala": "Shared apartment එකක ජීවත් වීම ගැටලුවක්ද?"
   }
 ];
@@ -544,6 +564,10 @@ questions.forEach((q, i) => {
   answer.className = 'answer-text';
   answer.textContent = q.answer;
 
+  const romajiEl = document.createElement('div');
+  romajiEl.style.cssText = 'font-size:0.8rem;color:var(--text-secondary);padding:2px 14px 0;font-style:italic;';
+  romajiEl.textContent = q.romaji;
+
   const actions = document.createElement('div');
   actions.className = 'card-actions';
 
@@ -575,7 +599,7 @@ questions.forEach((q, i) => {
 
   actions.append(answerPlayBtn, googleLink, googleLinkA);
 
-  body.append(sinhala, answer, actions);
+  body.append(sinhala, answer, romajiEl, actions);
   card.appendChild(body);
 
   header.addEventListener('click', () => {
@@ -708,6 +732,9 @@ function showPracticeCard(idx) {
   pLabel.textContent = 'しつもん ' + q.label + ' / ' + (idx + 1) + ' / ' + practiceQueue.length;
   pQuestion.textContent = q.question;
   pAnswer.textContent = q.answer;
+  const pRomaji = document.getElementById('pRomaji');
+  pRomaji.textContent = q.romaji;
+  pRomaji.style.display = 'none';
   pAnswer.classList.remove('show');
   pSpeakA.style.display = 'none';
   pShowA.style.display = '';
@@ -732,6 +759,7 @@ pSpeakQ.addEventListener('click', () => {
 pShowA.addEventListener('click', () => {
   if (!practiceQueue.length) return;
   pAnswer.classList.add('show');
+  document.getElementById('pRomaji').style.display = '';
   pShowA.style.display = 'none';
   pSpeakA.style.display = '';
 });
