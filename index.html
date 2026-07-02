@@ -235,7 +235,7 @@ body.dark .card { border-color: #444; }
       <button id="pSpeedUp">+</button>
     </div>
     <div class="p-answer" id="pAnswer"></div>
-    <div id="pRomaji" style="font-size:0.9rem;color:var(--text-secondary);padding:4px 16px 0;font-style:italic;display:none;"></div>
+    <div id="pRomaji" style="font-size:1.3rem;color:var(--text-secondary);padding:4px 16px 0;font-style:italic;display:none;"></div>
     <div class="p-status" id="pStatus"></div>
   </div>
 </div>
@@ -570,7 +570,7 @@ questions.forEach((q, i) => {
   answer.textContent = q.answer;
 
   const romajiEl = document.createElement('div');
-  romajiEl.style.cssText = 'font-size:0.9rem;color:var(--text-secondary);padding:2px 14px 0;font-style:italic;';
+  romajiEl.style.cssText = 'font-size:1.15rem;color:var(--text-secondary);padding:2px 14px 0;font-style:italic;';
   romajiEl.textContent = q.romaji;
 
   const actions = document.createElement('div');
