@@ -319,6 +319,42 @@ const questions = [
     "question": "かいしゃ に しつもん したいこと は ありますか。（ぎゃくしつもん）",
     "answer": "はい、ホテルの しごとを はじめる まえに なにか じゅんびして おくことは ありますか。",
     "sinhala": "සමාගමෙන් ඔබට අහන්න තියෙනවාද? (ඔබ අසන ප්‍රශ්නය)"
+  },
+  {
+    "label": "15",
+    "question": "けいたい で ぐーぐるまっぷ を つかう こと が できます か。",
+    "answer": "はい、できます。いつも すまーとほん で ぐーぐるまっぷ や なびげーしょん を つかって います。",
+    "sinhala": "Google Maps භාවිත කරන්න පුළුවන්ද?"
+  },
+  {
+    "label": "16",
+    "question": "じこ が あった とき、 なに を しなければ なりませんか。",
+    "answer": "まず けいさつ に れんらく します。そのあと かいしゃ に れんらく します。けがにん が いれば きゅうきゅうしゃ を よびます。",
+    "sinhala": "රිය අනතුරක් සිදු වූ විට කළ යුතු දේ?"
+  },
+  {
+    "label": "17",
+    "question": "どくしん です か。／ けっこん して います か。",
+    "answer": "いいえ、けっこん して いません。どくしん です。",
+    "sinhala": "විවාහකද / අවිවාහකද?"
+  },
+  {
+    "label": "18",
+    "question": "にほん へ いく こと に ついて かぞく の どうい は あります か。",
+    "answer": "はい、かぞく は みんな さんせい して いて、おうえん して くれて います。",
+    "sinhala": "ජපානයට යාමට පවුලේ අයගේ කැමැත්ත?"
+  },
+  {
+    "label": "19",
+    "question": "にほん で どのくらい はたらきたい です か。",
+    "answer": "できれば じゅうごねん いじょう、ながく はたらきたい と おもって おります。にほん の せいかつ や しごと に なれて、ずっと がんばります。",
+    "sinhala": "ජපානයේ කොපමණ කාලයක් වැඩ කරන්න බලාපොරොත්තු වෙනවාද?"
+  },
+  {
+    "label": "20",
+    "question": "きょうゆう せいかつ は だいじょうぶ です か。",
+    "answer": "はい、まったく もんだい ありません。だいじょうぶ です。",
+    "sinhala": "Shared apartment එකක ජීවත් වීම ගැටලුවක්ද?"
   }
 ];
 
@@ -587,34 +623,62 @@ searchBox.addEventListener('input', () => {
 
 // Voice search
 const micBtn = document.getElementById('micBtn');
-let recognition = null;
-try {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (SR) {
-    recognition = new SR();
-    recognition.lang = 'ja-JP';
-    recognition.interimResults = false;
-    recognition.continuous = false;
-    recognition.onresult = (e) => {
-      const transcript = e.results[0][0].transcript;
-      searchBox.value = transcript;
-      searchBox.dispatchEvent(new Event('input'));
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SR) {
+  let recognition = null;
+  let micActive = false;
+  micBtn.addEventListener('click', () => {
+    if (micActive) {
+      if (recognition) try { recognition.stop(); } catch(e) {}
+      micActive = false;
       micBtn.classList.remove('listening');
-    };
-    recognition.onerror = () => micBtn.classList.remove('listening');
-    recognition.onend = () => micBtn.classList.remove('listening');
-    micBtn.addEventListener('click', () => {
-      if (micBtn.classList.contains('listening')) {
-        recognition.stop();
+      return;
+    }
+    if (!recognition) {
+      recognition = new SR();
+      recognition.interimResults = true;
+      recognition.continuous = false;
+      recognition.lang = 'ja-JP';
+      recognition.onresult = (e) => {
+        let t = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          t += e.results[i][0].transcript;
+        }
+        searchBox.placeholder = '🔍 ' + t;
+        if (e.results[0].isFinal) {
+          searchBox.value = t;
+          searchBox.dispatchEvent(new Event('input'));
+          micActive = false;
+          micBtn.classList.remove('listening');
+          searchBox.placeholder = '🔍 しつもん を さがす (Search questions...)';
+        }
+      };
+      recognition.onerror = (e) => {
+        if (e.error !== 'no-speech' && e.error !== 'aborted') {
+          searchBox.placeholder = '🎤 ' + e.error;
+          setTimeout(() => { searchBox.placeholder = '🔍 しつもん を さがす (Search questions...)'; }, 2000);
+        }
+        micActive = false;
         micBtn.classList.remove('listening');
-      } else {
-        try { recognition.start(); micBtn.classList.add('listening'); } catch(e) {}
-      }
-    });
-  } else {
-    micBtn.style.display = 'none';
-  }
-} catch(e) { micBtn.style.display = 'none'; }
+      };
+      recognition.onend = () => {
+        micActive = false;
+        micBtn.classList.remove('listening');
+      };
+    }
+    try {
+      recognition.start();
+      micActive = true;
+      micBtn.classList.add('listening');
+      searchBox.placeholder = '🎤 いま きいて います... (Listening...)';
+    } catch(e) {
+      searchBox.placeholder = '🎤 ' + e.message;
+      micBtn.classList.remove('listening');
+    }
+  });
+} else {
+  micBtn.style.display = 'none';
+}
 
 // Practice mode
 const practiceOverlay = document.getElementById('practiceOverlay');
