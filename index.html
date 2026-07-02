@@ -74,6 +74,16 @@ body.dark .card { border-color: #444; }
 }
 .search-box:focus { border-color: #2d6a9f; box-shadow: 0 0 0 3px rgba(45,106,159,0.15); }
 .search-box.error { border-color: #e53935; }
+.search-wrap { display: flex; gap: 6px; margin-bottom: 8px; }
+.search-wrap .search-box { margin-bottom: 0; flex: 1; }
+.mic-btn {
+  flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; border: 2px solid #2d6a9f;
+  background: var(--card-bg); color: #2d6a9f; font-size: 1.2rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: 0.2s;
+}
+.mic-btn:hover { background: #2d6a9f; color: white; }
+.mic-btn.listening { background: #e53935; color: white; border-color: #e53935; animation: pulse 1s infinite; }
+@keyframes pulse { 0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)} }
 #questions { display: flex; flex-direction: column; gap: 10px; }
 .card {
   background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 8px var(--card-shadow);
@@ -195,7 +205,10 @@ body.dark .card { border-color: #444; }
   <div class="nav-bar">
     <span class="nav-btn" style="cursor:default;background:#1e3a5f;color:white;border-color:#1e3a5f;">🏠 GIFU Practice</span>
   </div>
-  <input class="search-box" id="searchBox" type="text" placeholder="🔍 しつもん を さがす (Search questions...)">
+  <div class="search-wrap">
+    <input class="search-box" id="searchBox" type="text" placeholder="🔍 しつもん を さがす (Search questions...)">
+    <button class="mic-btn" id="micBtn" title="🎤 こえで さがす (Voice search)">🎤</button>
+  </div>
   <div id="questions"></div>
   <div class="footer">GIFU Interview Practice — 2026</div>
 </div>
@@ -571,6 +584,37 @@ searchBox.addEventListener('input', () => {
     else searchBox.classList.remove('error');
   }
 });
+
+// Voice search
+const micBtn = document.getElementById('micBtn');
+let recognition = null;
+try {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SR) {
+    recognition = new SR();
+    recognition.lang = 'ja-JP';
+    recognition.interimResults = false;
+    recognition.continuous = false;
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
+      searchBox.value = transcript;
+      searchBox.dispatchEvent(new Event('input'));
+      micBtn.classList.remove('listening');
+    };
+    recognition.onerror = () => micBtn.classList.remove('listening');
+    recognition.onend = () => micBtn.classList.remove('listening');
+    micBtn.addEventListener('click', () => {
+      if (micBtn.classList.contains('listening')) {
+        recognition.stop();
+        micBtn.classList.remove('listening');
+      } else {
+        try { recognition.start(); micBtn.classList.add('listening'); } catch(e) {}
+      }
+    });
+  } else {
+    micBtn.style.display = 'none';
+  }
+} catch(e) { micBtn.style.display = 'none'; }
 
 // Practice mode
 const practiceOverlay = document.getElementById('practiceOverlay');
