@@ -111,7 +111,7 @@ body.dark .card { border-color: #444; }
   flex-shrink: 0; background: #1e3a5f; color: white; border-radius: 6px;
   padding: 2px 8px; font-size: 0.75rem; font-weight: 600; line-height: 1.6;
 }
-.question-text { flex: 1; font-size: 1.15rem; line-height: 1.5; color: var(--text-primary); font-weight: 700; }
+.question-text { flex: 1; font-size: 1.2rem; line-height: 1.5; color: var(--text-primary); font-weight: 700; }
 .speed-group { display: flex; gap: 4px; flex-shrink: 0; }
 .speed-btn {
   padding: 4px 8px; font-size: 0.75rem; border: 1px solid #bbb; border-radius: 4px;
@@ -125,11 +125,11 @@ body.dark .card { border-color: #444; }
 .card.open .card-body { display: flex; }
 .answer-text {
   background: var(--answer-bg); border-left: 4px solid var(--answer-border);
-  padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 1.1rem;
+  padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 1.15rem;
   line-height: 1.7; color: var(--text-primary); white-space: pre-wrap; font-weight: 700;
 }
 .sinhalatag {
-  font-size: 0.7rem; color: var(--text-secondary); font-style: italic; margin-bottom: 2px;
+  font-size: 0.8rem; color: var(--text-secondary); font-style: italic; margin-bottom: 2px;
 }
 .card-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .google-link {
@@ -155,7 +155,7 @@ body.dark .card { border-color: #444; }
 }
 .p-label { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px; }
 .p-question {
-  font-size: 1.4rem; line-height: 1.6; color: var(--text-primary);
+  font-size: 1.5rem; line-height: 1.6; color: var(--text-primary);
   margin-bottom: 20px; font-weight: 700;
 }
 .p-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -182,7 +182,7 @@ body.dark .card { border-color: #444; }
 .p-answer {
   background: var(--answer-bg); border-left: 4px solid var(--answer-border);
   padding: 20px 24px; border-radius: 0 8px 8px 0; margin-bottom: 14px;
-  display: none; font-size: 1.2rem; line-height: 1.7; color: var(--text-primary); white-space: pre-wrap; font-weight: 700;
+  display: none; font-size: 1.3rem; line-height: 1.7; color: var(--text-primary); white-space: pre-wrap; font-weight: 700;
 }
 .p-answer.show { display: block; }
 .p-status { font-size: 0.8rem; color: var(--text-secondary); text-align: center; margin-top: 8px; }
@@ -235,7 +235,7 @@ body.dark .card { border-color: #444; }
       <button id="pSpeedUp">+</button>
     </div>
     <div class="p-answer" id="pAnswer"></div>
-    <div id="pRomaji" style="font-size:0.7rem;color:var(--text-secondary);padding:4px 16px 0;font-style:italic;display:none;"></div>
+    <div id="pRomaji" style="font-size:0.9rem;color:var(--text-secondary);padding:4px 16px 0;font-style:italic;display:none;"></div>
     <div class="p-status" id="pStatus"></div>
   </div>
 </div>
@@ -570,7 +570,7 @@ questions.forEach((q, i) => {
   answer.textContent = q.answer;
 
   const romajiEl = document.createElement('div');
-  romajiEl.style.cssText = 'font-size:0.7rem;color:var(--text-secondary);padding:2px 14px 0;font-style:italic;';
+  romajiEl.style.cssText = 'font-size:0.9rem;color:var(--text-secondary);padding:2px 14px 0;font-style:italic;';
   romajiEl.textContent = q.romaji;
 
   const actions = document.createElement('div');
