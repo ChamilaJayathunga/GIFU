@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIFU めんせつ れんしゅう - GIFU Interview Practice</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+  background: #f0f2f5;
+  min-height: 100vh;
+  padding: 12px;
+  transition: background 0.3s;
+}
+:root {
+  --card-bg: white;
+  --card-header: #fff9c4;
+  --card-shadow: rgba(0,0,0,0.08);
+  --text-primary: #1a1a2e;
+  --text-secondary: #555;
+  --answer-bg: #e8f5e9;
+  --answer-border: #4caf50;
+  --search-bg: white;
+  --search-border: #ccc;
+  --footer-color: #999;
+  --overlay-bg: linear-gradient(135deg, #e8f0fe, #fce4ec);
+  --input-bg: rgba(255,255,255,0.85);
+}
+body.dark {
+  background: #1a1a2e;
+  --card-bg: #2a2a3e;
+  --card-header: #3e3a2a;
+  --card-shadow: rgba(0,0,0,0.4);
+  --text-primary: #e0e0e0;
+  --text-secondary: #aaa;
+  --answer-bg: #335544;
+  --answer-border: #66bb6a;
+  --search-bg: #2a2a3e;
+  --search-border: #555;
+  --footer-color: #666;
+  --overlay-bg: linear-gradient(135deg, #1e2a3a, #2a1e2e);
+  --input-bg: rgba(40,40,60,0.9);
+}
+body.dark .card { border-color: #444; }
+.container {
+  max-width: 740px; margin: 0 auto; position: relative;
+}
+.header {
+  background: linear-gradient(135deg, #1e3a5f, #2d6a9f);
+  color: white; padding: 24px 20px 20px; border-radius: 16px; margin-bottom: 16px; text-align: center; position: relative;
+}
+.header h1 { font-size: 1.6rem; letter-spacing: 1px; font-weight: 600; }
+.header .sub { font-size: 0.85rem; opacity: 0.85; margin-top: 6px; letter-spacing: 2px; }
+.theme-toggle {
+  position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.15);
+  border: none; color: white; font-size: 1.3rem; width: 40px; height: 40px;
+  border-radius: 50%; cursor: pointer; line-height: 40px; text-align: center;
+  transition: background 0.2s;
+}
+.theme-toggle:hover { background: rgba(255,255,255,0.3); }
+.nav-bar {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; justify-content: center;
+}
+.nav-btn {
+  background: white; border: 1px solid #ccc; border-radius: 8px; padding: 8px 16px;
+  font-size: 0.85rem; cursor: pointer; transition: 0.2s; text-decoration: none; color: #333;
+}
+.nav-btn:hover { background: #e8e8e8; border-color: #999; }
+.search-box {
+  width: 100%; padding: 12px 16px; border: 1px solid var(--search-border);
+  border-radius: 10px; font-size: 1rem; background: var(--search-bg);
+  color: var(--text-primary); outline: none; transition: 0.2s; margin-bottom: 8px;
+}
+.search-box:focus { border-color: #2d6a9f; box-shadow: 0 0 0 3px rgba(45,106,159,0.15); }
+.search-box.error { border-color: #e53935; }
+#questions { display: flex; flex-direction: column; gap: 10px; }
+.card {
+  background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 8px var(--card-shadow);
+  border: 1px solid #e0e0e0; overflow: hidden; transition: 0.2s;
+}
+.card-header {
+  display: flex; align-items: center; gap: 8px; padding: 12px 14px;
+  background: var(--card-header); cursor: pointer; user-select: none;
+  transition: background 0.2s;
+}
+.card-header:hover { filter: brightness(0.97); }
+.play-btn {
+  flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #1e3a5f;
+  background: transparent; color: #1e3a5f; font-size: 1.1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: 0.2s;
+}
+.play-btn.playing { background: #e53935; color: white; border-color: #e53935; }
+.copy-btn {
+  flex-shrink: 0; width: 36px; height: 36px; border-radius: 8px; border: 1px solid #ccc;
+  background: transparent; font-size: 1rem; cursor: pointer; transition: 0.2s;
+}
+.copy-btn:hover { background: #ddd; }
+.question-label {
+  flex-shrink: 0; background: #1e3a5f; color: white; border-radius: 6px;
+  padding: 2px 8px; font-size: 0.75rem; font-weight: 600; line-height: 1.6;
+}
+.question-text { flex: 1; font-size: 0.95rem; line-height: 1.4; color: var(--text-primary); }
+.speed-group { display: flex; gap: 3px; flex-shrink: 0; }
+.speed-btn {
+  padding: 2px 6px; font-size: 0.65rem; border: 1px solid #bbb; border-radius: 4px;
+  background: white; cursor: pointer; color: #333; transition: 0.2s;
+}
+.speed-btn:hover { background: #ddd; }
+.speed-btn.active { background: #1e3a5f; color: white; border-color: #1e3a5f; }
+.card-body {
+  display: none; padding: 14px; border-top: 1px solid #eee; flex-direction: column; gap: 10px;
+}
+.card.open .card-body { display: flex; }
+.answer-text {
+  background: var(--answer-bg); border-left: 4px solid var(--answer-border);
+  padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 0.9rem;
+  line-height: 1.6; color: var(--text-primary); white-space: pre-wrap;
+}
+.sinhalatag {
+  font-size: 0.75rem; color: var(--text-secondary); font-style: italic; margin-bottom: 2px;
+}
+.card-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.google-link {
+  font-size: 0.85rem; color: #2d6a9f; text-decoration: none; padding: 4px 10px;
+  border: 1px solid #2d6a9f; border-radius: 6px; transition: 0.2s;
+}
+.google-link:hover { background: #2d6a9f; color: white; }
+.footer { text-align: center; padding: 20px; color: var(--footer-color); font-size: 0.8rem; }
+.practice-overlay {
+  display: none; position: fixed; inset: 0; z-index: 1000;
+  background: var(--overlay-bg); padding: 20px; overflow-y: auto;
+}
+.practice-overlay.open { display: flex; align-items: center; justify-content: center; }
+.p-card {
+  background: var(--card-bg); border-radius: 16px; padding: 28px 24px;
+  max-width: 600px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  position: relative;
+}
+.p-close {
+  position: absolute; top: 12px; right: 16px; background: none; border: none;
+  font-size: 1.8rem; cursor: pointer; color: var(--text-secondary); line-height: 1;
+}
+.p-label { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px; }
+.p-question {
+  font-size: 1.1rem; line-height: 1.6; color: var(--text-primary);
+  margin-bottom: 16px; font-weight: 500;
+}
+.p-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.p-btn {
+  padding: 10px 18px; border: none; border-radius: 8px; font-size: 0.9rem;
+  cursor: pointer; transition: 0.2s; font-weight: 500;
+}
+.p-btn.primary { background: #1e3a5f; color: white; }
+.p-btn.primary:hover { background: #2d6a9f; }
+.p-btn.secondary { background: #4caf50; color: white; }
+.p-btn.secondary:hover { background: #43a047; }
+.p-btn.danger { background: #e53935; color: white; }
+.p-btn.danger:hover { background: #c62828; }
+.p-btn.outline { background: transparent; border: 1px solid #ccc; color: var(--text-primary); }
+.p-btn.outline:hover { background: #eee; }
+.p-btn:disabled { opacity: 0.4; cursor: default; }
+.p-speed { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.p-speed button {
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid #ccc;
+  background: var(--card-bg); font-size: 1.2rem; cursor: pointer; color: var(--text-primary);
+}
+.p-speed button:hover { background: #ddd; }
+.p-speed span { font-size: 0.9rem; min-width: 50px; text-align: center; color: var(--text-primary); }
+.p-answer {
+  background: var(--answer-bg); border-left: 4px solid var(--answer-border);
+  padding: 12px 16px; border-radius: 0 8px 8px 0; margin-bottom: 12px;
+  display: none; font-size: 0.95rem; line-height: 1.6; color: var(--text-primary); white-space: pre-wrap;
+}
+.p-answer.show { display: block; }
+.p-status { font-size: 0.8rem; color: var(--text-secondary); text-align: center; margin-top: 8px; }
+@media (max-width: 520px) {
+  .card-header { flex-wrap: wrap; padding: 10px; }
+  .play-btn { width: 44px; height: 44px; }
+  .question-text { font-size: 0.88rem; min-width: 150px; }
+  .speed-btn { padding: 4px 8px; font-size: 0.7rem; min-height: 32px; }
+  .header h1 { font-size: 1.3rem; }
+  .p-card { padding: 20px 16px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+    <h1>GIFU めんせつ れんしゅう</h1>
+    <div class="sub">GIFU Interview Practice — しつもんと こたえ</div>
+  </div>
+  <div class="nav-bar">
+    <span class="nav-btn" style="cursor:default;background:#1e3a5f;color:white;border-color:#1e3a5f;">🏠 GIFU Practice</span>
+  </div>
+  <input class="search-box" id="searchBox" type="text" placeholder="🔍 しつもん を さがす (Search questions...)">
+  <div id="questions"></div>
+  <div class="footer">GIFU Interview Practice — 2026</div>
+</div>
+
+<div class="practice-overlay" id="practiceOverlay">
+  <div class="p-card">
+    <button class="p-close" id="pClose">✕</button>
+    <div class="p-label" id="pLabel"></div>
+    <div class="p-question" id="pQuestion"></div>
+    <div class="p-actions">
+      <button class="p-btn primary" id="pSpeakQ">🔊 しつもん</button>
+      <button class="p-btn secondary" id="pShowA">📖 こたえ</button>
+      <button class="p-btn primary" id="pSpeakA" style="display:none;">🔊 こたえ</button>
+      <button class="p-btn outline" id="pNext">➡ つぎへ</button>
+    </div>
+    <div class="p-speed">
+      <button id="pSpeedDown">−</button>
+      <span id="pSpeedDisplay">1.00x</span>
+      <button id="pSpeedUp">+</button>
+    </div>
+    <div class="p-answer" id="pAnswer"></div>
+    <div class="p-status" id="pStatus"></div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    "label": "1",
+    "question": "どんな しごと を していました か。／ しごと の けいけん を おしえて ください。",
+    "answer": "スリランカのホテルでレセプションとしてはたらいていました。いまもおなじしごとをつづけています。ホテルのなまえはクイーンズホテルです。キャンディにあります。",
+    "sinhala": "ඔයා කලින් කරපු රැකියාව මොකක්ද? / රැකියා පළපුරුද්ද පවසන්න."
+  },
+  {
+    "label": "2",
+    "question": "なぜ にほん で はたらきたい です か。",
+    "answer": "わたし は ちいさい ころ から、にほん に いく の が ゆめ でした。にほん の ぶんか や、すばらしい おもてなし の サービス に きょうみ が あります。おきゃくさま に よろこんで いただける ような サービス の ぎじゅつ を まなびたい と おもいます。その ため に にほん を えらびました。",
+    "sinhala": "ඇයි ජපානයේ වැඩ කරන්න හිතන්නේ?"
+  },
+  {
+    "label": "3",
+    "question": "あなた の ちょうしょ を おしえて ください。",
+    "answer": "わたし の ちょうしょ は せきにんかん が ある ところ です。まかせた しごと を さいご まで やりとげます。あと あたらしい こと を はやく まなべます。（たとえば、ホテル の システム や マナー を はやく おぼえられます。）いぜん クイーンズホテル で レセプション の しごと を したとき むずかしい もんだい が おきて も あわてずに れいせいに たいおうし かいけつ する ことが できました。この ちょうしょ を いかして にほん で も せきにん を もって はたらきたい です。",
+    "sinhala": "ඔයාගේ ශක්තීන්/දක්ෂතා මොනවාද?"
+  },
+  {
+    "label": "4",
+    "question": "あなた の たんしょ を おしえて ください。",
+    "answer": "わたし の たんしょ は しごと に しゅうちゅう しすぎる ところ です。いま は じかん の バランス を いしき しながら しごと を するように こころがけて います。ひとつ ひとつ の しごと を きにしすぎて じかん が かかる こと が ある から です。",
+    "sinhala": "ඔයාගේ දුර්වලකම මොකක්ද?"
+  },
+  {
+    "label": "5",
+    "question": "ぎふけん に ついて なにか しっています か。／ なぜ ぎふ で はたらきたい です か。",
+    "answer": "ぎふけんは、しぜんがとてもうつくしいとききました。とくに、しらかわごうのふるい、にほんのいえをみてみたいです。そして、ぎふのひとはとてもやさしいとききましたから、ぎふではたらきたいです。",
+    "sinhala": "ගිෆු ගැන මොනවා දන්නවාද දන්නේ? / ඇයි ගිෆු වල වැඩ කරන්න හිතන්නේ?"
+  },
+  {
+    "label": "6",
+    "question": "えいご は できます か。",
+    "answer": "はい、えいごは はなすことができます。びじねすかいわや、ホテルのしごとでの かいわも だいじょうぶです。",
+    "sinhala": "ඉංග්‍රීසි පුළුවන්ද?"
+  },
+  {
+    "label": "7",
+    "question": "あなたの しゅみは なんですか。",
+    "answer": "わたしの しゅみは あたらしい てくのろじーを まなぶことと、えーあいを つかって ビデオや がぞうを つくることです。",
+    "sinhala": "විනෝදාංශ මොනවාද?"
+  },
+  {
+    "label": "8",
+    "question": "シフトきんむ は だいじょうぶ です か。",
+    "answer": "はい、やきんやシフトきんむはまったくもんだいありません。だいじょうぶです。",
+    "sinhala": "ශිෆ්ට් ක්‍රමයට වැඩ කරන්න පුළුවන්ද?"
+  },
+  {
+    "label": "9",
+    "question": "アレルギー や だんじき は あります か。",
+    "answer": "いいえ、たべもののアレルギーはありません。だんじきもしませんので、しごとにえいきょうはありません。",
+    "sinhala": "කෑම බීම ඇලර්ජි හෝ උපවාස තියෙනවාද?"
+  },
+  {
+    "label": "10",
+    "question": "じてんしゃ に のる こと や あるく こと は だいじょうぶ です か。",
+    "answer": "はい、まいにち、じてんしゃにのることも、ながいきょりをあるくこともだいじょうぶです。",
+    "sinhala": "බයිසිකල් පදින්න සහ පයින් ඇවිදින්න පුළුවන්ද?"
+  },
+  {
+    "label": "11",
+    "question": "にほん で どのくらい はたらきたい です か。",
+    "answer": "できれば 15ねん いじょう、ながく はたらきたい と おもっています。にほん の せいかつ や しごとに なれて、ずっと がんばりたい です。",
+    "sinhala": "ජපානයේ කොච්චර කල් වැඩ කරන්න හිතන් ඉන්නවාද?"
+  },
+  {
+    "label": "12",
+    "question": "いま の しごと を やめる こと に もんだい は ありません か。",
+    "answer": "はい、まったく もんだい ありません。すでに ホテル には「にほん で はたらく ため に やめる」と つたえて あります。",
+    "sinhala": "දැනට කරන රැකියාවෙන් ඉවත් වෙන්න ගැටලුවක් නැද්ද?"
+  },
+  {
+    "label": "13",
+    "question": "めんせつ の おわり に：ほんじつはおじかんをいただき、ありがとうございました。",
+    "answer": "ほんじつはおじかんをいただき、ありがとうございました。",
+    "sinhala": "ඉන්ටර්වීව් එක අවසානයේදී"
+  },
+  {
+    "label": "14",
+    "question": "かいしゃ に しつもん したいこと は ありますか。（ぎゃくしつもん）",
+    "answer": "はい、ホテルの しごとを はじめる まえに なにか じゅんびして おくことは ありますか。",
+    "sinhala": "සමාගමෙන් ඔබට අහන්න තියෙනවාද? (ඔබ අසන ප්‍රශ්නය)"
+  }
+];
+
+const kanaToRomaji = {
+  'あ':'a','い':'i','う':'u','え':'e','お':'o',
+  'か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko',
+  'さ':'sa','し':'shi','す':'su','せ':'se','そ':'so',
+  'た':'ta','ち':'chi','つ':'tsu','て':'te','と':'to',
+  'な':'na','に':'ni','ぬ':'nu','ね':'ne','の':'no',
+  'は':'ha','ひ':'hi','ふ':'fu','へ':'he','ほ':'ho',
+  'ま':'ma','み':'mi','む':'mu','め':'me','も':'mo',
+  'や':'ya','ゆ':'yu','よ':'yo',
+  'ら':'ra','り':'ri','る':'ru','れ':'re','ろ':'ro',
+  'わ':'wa','を':'wo','ん':'n','が':'ga','ぎ':'gi',
+  'ぐ':'gu','げ':'ge','ご':'go','ざ':'za','じ':'ji',
+  'ず':'zu','ぜ':'ze','ぞ':'zo','だ':'da','ぢ':'ji',
+  'づ':'zu','で':'de','ど':'do','ば':'ba','び':'bi',
+  'ぶ':'bu','べ':'be','ぼ':'bo','ぱ':'pa','ぴ':'pi',
+  'ぷ':'pu','ぺ':'pe','ぽ':'po','ゃ':'ya','ゅ':'yu',
+  'ょ':'yo','っ':'','ー':'','、':'','。':'','　':'',
+  'ア':'a','イ':'i','ウ':'u','エ':'e','オ':'o',
+  'カ':'ka','キ':'ki','ク':'ku','ケ':'ke','コ':'ko',
+  'サ':'sa','シ':'shi','ス':'su','セ':'se','ソ':'so',
+  'タ':'ta','チ':'chi','ツ':'tsu','テ':'te','ト':'to',
+  'ナ':'na','ニ':'ni','ヌ':'nu','ネ':'ne','ノ':'no',
+  'ハ':'ha','ヒ':'hi','フ':'fu','ヘ':'he','ホ':'ho',
+  'マ':'ma','ミ':'mi','ム':'mu','メ':'me','モ':'mo',
+  'ヤ':'ya','ユ':'yu','ヨ':'yo',
+  'ラ':'ra','リ':'ri','ル':'ru','レ':'re','ロ':'ro',
+  'ワ':'wa','ヲ':'wo','ン':'n','ガ':'ga','ギ':'gi',
+  'グ':'gu','ゲ':'ge','ゴ':'go','ザ':'za','ジ':'ji',
+  'ズ':'zu','ゼ':'ze','ゾ':'zo','ダ':'da','ヂ':'ji',
+  'ヅ':'zu','デ':'de','ド':'do','バ':'ba','ビ':'bi',
+  'ブ':'bu','ベ':'be','ボ':'bo','パ':'pa','ピ':'pi',
+  'プ':'pu','ペ':'pe','ポ':'po','ャ':'ya','ュ':'yu',
+  'ョ':'yo','ッ':'','ー':''
+};
+function toRomaji(text) {
+  let r = '';
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (kanaToRomaji[ch] !== undefined) {
+      r += kanaToRomaji[ch];
+      if ((ch === 'っ' || ch === 'ッ') && i+1 < text.length && kanaToRomaji[text[i+1]]) {
+        const n = kanaToRomaji[text[i+1]];
+        if (n) r += n[0];
+      }
+    } else if (/[a-zA-Z0-9]/.test(ch)) {
+      r += ch.toLowerCase();
+    }
+  }
+  return r;
+}
+const romajiCache = questions.map(q => ({
+  qr: toRomaji(q.question),
+  ar: toRomaji(q.answer),
+  sr: toRomaji(q.sinhala)
+}));
+
+// Theme
+const themeToggle = document.getElementById('themeToggle');
+if (localStorage.getItem('theme') === 'dark') {
+  document.body.classList.add('dark');
+  themeToggle.textContent = '☀️';
+}
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  themeToggle.textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+});
+
+// TTS
+let audioCtx = null;
+function unlockAudio() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+document.addEventListener('click', unlockAudio, { once: true });
+
+let googleFallback = null;
+function playGoogleAudio(text, rate, onStart, onEnd) {
+  const audio = new Audio();
+  audio.src = 'https://translate.google.com/translate_tts?ie=UTF-8&q=' + encodeURIComponent(text) + '&tl=ja&client=tw-ob';
+  audio.playbackRate = rate;
+  audio.onplaying = onStart;
+  audio.onended = onEnd;
+  audio.play().catch(() => {});
+}
+function tryWebSpeech(text, rate, onStart, onEnd) {
+  if (!window.speechSynthesis) return false;
+  try {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'ja-JP';
+    utterance.rate = rate;
+    utterance.onstart = onStart;
+    utterance.onend = onEnd;
+    utterance.onerror = () => {};
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    return true;
+  } catch (e) { return false; }
+}
+function speakText(text, onStart, onEnd) {
+  let called = false;
+  function done() { if (!called) { called = true; if (onEnd) onEnd(); } }
+  googleFallback = setTimeout(() => {
+    if (!called) { called = true; playGoogleAudio(text, 0.85, onStart, onEnd); }
+  }, 700);
+  const ok = tryWebSpeech(text, 0.85,
+    () => { clearTimeout(googleFallback); if (!called) { called = true; if (onStart) onStart(); } },
+    done
+  );
+  if (!ok) {
+    clearTimeout(googleFallback);
+    playGoogleAudio(text, 0.85, onStart, onEnd);
+  }
+}
+function speakCardText(text, rate, btn) {
+  btn.classList.add('playing');
+  speakText(text, () => {}, () => { btn.classList.remove('playing'); });
+}
+
+// Build cards
+const container = document.getElementById('questions');
+const cards = [];
+questions.forEach((q, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.index = i;
+
+  const header = document.createElement('div');
+  header.className = 'card-header';
+
+  const playBtn = document.createElement('button');
+  playBtn.className = 'play-btn';
+  playBtn.textContent = '▶';
+  playBtn.addEventListener('click', e => { e.stopPropagation(); speakCardText(q.question, 0.85, playBtn); });
+
+  const copyBtn = document.createElement('button');
+  copyBtn.className = 'copy-btn';
+  copyBtn.textContent = '📋';
+  copyBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(q.question).then(() => {
+      copyBtn.textContent = '✅';
+      setTimeout(() => { copyBtn.textContent = '📋'; }, 1500);
+    }).catch(() => {
+      copyBtn.textContent = '❌';
+      setTimeout(() => { copyBtn.textContent = '📋'; }, 1500);
+    });
+  });
+
+  const label = document.createElement('span');
+  label.className = 'question-label';
+  label.textContent = q.label;
+
+  const qText = document.createElement('span');
+  qText.className = 'question-text';
+  qText.textContent = q.question;
+
+  const speedGroup = document.createElement('div');
+  speedGroup.className = 'speed-group';
+  [0.5, 1, 1.5, 2].forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'speed-btn' + (s === 1 ? ' active' : '');
+    btn.textContent = s + 'x';
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      speedGroup.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      speakCardText(q.question, s, playBtn);
+    });
+    speedGroup.appendChild(btn);
+  });
+
+  header.append(playBtn, copyBtn, label, qText, speedGroup);
+  card.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'card-body';
+
+  const sinhala = document.createElement('div');
+  sinhala.className = 'sinhalatag';
+  sinhala.textContent = '🇱🇰 ' + q.sinhala;
+
+  const answer = document.createElement('div');
+  answer.className = 'answer-text';
+  answer.textContent = q.answer;
+
+  const actions = document.createElement('div');
+  actions.className = 'card-actions';
+
+  const googleLink = document.createElement('a');
+  googleLink.className = 'google-link';
+  googleLink.href = '#';
+  googleLink.textContent = '🌐 Googleで聞く';
+  googleLink.addEventListener('click', e => {
+    e.preventDefault();
+    playGoogleAudio(q.question, 0.85, () => {}, () => {});
+  });
+
+  actions.appendChild(googleLink);
+
+  body.append(sinhala, answer, actions);
+  card.appendChild(body);
+
+  header.addEventListener('click', () => {
+    card.classList.toggle('open');
+  });
+
+  container.appendChild(card);
+  cards.push(card);
+});
+
+// Search
+const searchBox = document.getElementById('searchBox');
+searchBox.addEventListener('input', () => {
+  const val = searchBox.value.trim().toLowerCase();
+  let visible = 0;
+  if (!val) {
+    cards.forEach(c => { c.style.display = ''; });
+    visible = cards.length;
+    searchBox.classList.remove('error');
+  } else {
+    cards.forEach((c, i) => {
+      const q = questions[i];
+      const r = romajiCache[i];
+      const match = q.question.toLowerCase().includes(val) ||
+                    q.answer.toLowerCase().includes(val) ||
+                    q.sinhala.toLowerCase().includes(val) ||
+                    q.label.includes(val) ||
+                    r.qr.includes(val) ||
+                    r.ar.includes(val) ||
+                    r.sr.includes(val);
+      c.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    if (visible === 0) searchBox.classList.add('error');
+    else searchBox.classList.remove('error');
+  }
+});
+
+// Practice mode
+const practiceOverlay = document.getElementById('practiceOverlay');
+const pClose = document.getElementById('pClose');
+const pLabel = document.getElementById('pLabel');
+const pQuestion = document.getElementById('pQuestion');
+const pSpeakQ = document.getElementById('pSpeakQ');
+const pShowA = document.getElementById('pShowA');
+const pSpeakA = document.getElementById('pSpeakA');
+const pNext = document.getElementById('pNext');
+const pSpeedDown = document.getElementById('pSpeedDown');
+const pSpeedUp = document.getElementById('pSpeedUp');
+const pSpeedDisplay = document.getElementById('pSpeedDisplay');
+const pAnswer = document.getElementById('pAnswer');
+const pStatus = document.getElementById('pStatus');
+
+let practiceQueue = [];
+let practiceIndex = 0;
+let practiceSpeed = 1;
+let pIsSpeaking = false;
+let pIsAnswerSpeaking = false;
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function showPracticeCard(idx) {
+  const q = practiceQueue[idx];
+  pLabel.textContent = 'しつもん ' + q.label + ' / ' + (idx + 1) + ' / ' + practiceQueue.length;
+  pQuestion.textContent = q.question;
+  pAnswer.textContent = q.answer;
+  pAnswer.classList.remove('show');
+  pSpeakA.style.display = 'none';
+  pShowA.style.display = '';
+  pSpeakQ.disabled = false;
+  pSpeakA.disabled = false;
+  pIsSpeaking = false;
+  pIsAnswerSpeaking = false;
+  pStatus.textContent = '';
+}
+
+pSpeakQ.addEventListener('click', () => {
+  if (!practiceQueue.length) return;
+  pSpeakQ.disabled = true;
+  pIsSpeaking = true;
+  pStatus.textContent = '🔊 しつもん を よみあげて います...';
+  speakText(practiceQueue[practiceIndex].question,
+    () => {},
+    () => { pIsSpeaking = false; pSpeakQ.disabled = false; pStatus.textContent = ''; }
+  );
+});
+
+pShowA.addEventListener('click', () => {
+  if (!practiceQueue.length) return;
+  pAnswer.classList.add('show');
+  pShowA.style.display = 'none';
+  pSpeakA.style.display = '';
+});
+
+pSpeakA.addEventListener('click', () => {
+  if (!practiceQueue.length) return;
+  pSpeakA.disabled = true;
+  pIsAnswerSpeaking = true;
+  pStatus.textContent = '🔊 こたえ を よみあげて います...';
+  speakText(practiceQueue[practiceIndex].answer,
+    () => {},
+    () => { pIsAnswerSpeaking = false; pSpeakA.disabled = false; pStatus.textContent = ''; }
+  );
+});
+
+pNext.addEventListener('click', () => {
+  if (!practiceQueue.length) return;
+  practiceIndex++;
+  if (practiceIndex >= practiceQueue.length) {
+    practiceOverlay.classList.remove('open');
+    return;
+  }
+  showPracticeCard(practiceIndex);
+});
+
+pClose.addEventListener('click', () => {
+  window.speechSynthesis.cancel();
+  if (googleFallback) clearTimeout(googleFallback);
+  practiceOverlay.classList.remove('open');
+});
+
+pSpeedDown.addEventListener('click', () => {
+  practiceSpeed = Math.max(0.25, +(practiceSpeed - 0.25).toFixed(2));
+  pSpeedDisplay.textContent = practiceSpeed.toFixed(2) + 'x';
+});
+pSpeedUp.addEventListener('click', () => {
+  practiceSpeed = Math.min(3, +(practiceSpeed + 0.25).toFixed(2));
+  pSpeedDisplay.textContent = practiceSpeed.toFixed(2) + 'x';
+});
+
+// Enter practice mode by clicking any question-label
+document.addEventListener('click', e => {
+  const label = e.target.closest('.question-label');
+  if (label) {
+    const card = label.closest('.card');
+    if (card) {
+      const idx = parseInt(card.dataset.index);
+      if (!isNaN(idx)) {
+        startPractice(idx);
+      }
+    }
+  }
+});
+
+function startPractice(startIdx) {
+  practiceQueue = shuffle([...questions]);
+  practiceIndex = 0;
+  // Put the clicked question first if provided
+  if (startIdx !== undefined && !isNaN(startIdx)) {
+    const clickedIdx = practiceQueue.findIndex(q => q.label === questions[startIdx].label);
+    if (clickedIdx > 0) {
+      [practiceQueue[0], practiceQueue[clickedIdx]] = [practiceQueue[clickedIdx], practiceQueue[0]];
+    }
+  }
+  practiceOverlay.classList.add('open');
+  showPracticeCard(0);
+}
+</script>
+</body>
+</html>
