@@ -100,7 +100,7 @@ body.dark .card { border-color: #444; }
   flex-shrink: 0; background: #1e3a5f; color: white; border-radius: 6px;
   padding: 2px 8px; font-size: 0.75rem; font-weight: 600; line-height: 1.6;
 }
-.question-text { flex: 1; font-size: 0.95rem; line-height: 1.4; color: var(--text-primary); }
+.question-text { flex: 1; font-size: 0.95rem; line-height: 1.4; color: var(--text-primary); font-weight: 700; }
 .speed-group { display: flex; gap: 3px; flex-shrink: 0; }
 .speed-btn {
   padding: 2px 6px; font-size: 0.65rem; border: 1px solid #bbb; border-radius: 4px;
@@ -126,6 +126,7 @@ body.dark .card { border-color: #444; }
   border: 1px solid #2d6a9f; border-radius: 6px; transition: 0.2s;
 }
 .google-link:hover { background: #2d6a9f; color: white; }
+.google-link.playing { background: #e53935; color: white; border-color: #e53935; }
 .footer { text-align: center; padding: 20px; color: var(--footer-color); font-size: 0.8rem; }
 .practice-overlay {
   display: none; position: fixed; inset: 0; z-index: 1000;
@@ -498,6 +499,14 @@ questions.forEach((q, i) => {
   const actions = document.createElement('div');
   actions.className = 'card-actions';
 
+  const answerPlayBtn = document.createElement('button');
+  answerPlayBtn.className = 'google-link';
+  answerPlayBtn.textContent = '🔊 こたえを聞く';
+  answerPlayBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    speakCardText(q.answer, 0.85, answerPlayBtn);
+  });
+
   const googleLink = document.createElement('a');
   googleLink.className = 'google-link';
   googleLink.href = '#';
@@ -507,7 +516,16 @@ questions.forEach((q, i) => {
     playGoogleAudio(q.question, 0.85, () => {}, () => {});
   });
 
-  actions.appendChild(googleLink);
+  const googleLinkA = document.createElement('a');
+  googleLinkA.className = 'google-link';
+  googleLinkA.href = '#';
+  googleLinkA.textContent = '🌐 こたえ';
+  googleLinkA.addEventListener('click', e => {
+    e.preventDefault();
+    playGoogleAudio(q.answer, 0.85, () => {}, () => {});
+  });
+
+  actions.append(answerPlayBtn, googleLink, googleLinkA);
 
   body.append(sinhala, answer, actions);
   card.appendChild(body);
